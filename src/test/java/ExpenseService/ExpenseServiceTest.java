@@ -4,10 +4,13 @@ import ExpenseService.Exception.UnexpectedProjectTypeException;
 import ExpenseService.Expense.ExpenseType;
 import ExpenseService.Project.Project;
 import ExpenseService.Project.ProjectType;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ExpenseServiceTest {
     @Test
@@ -16,10 +19,10 @@ class ExpenseServiceTest {
         Project project = new Project(ProjectType.INTERNAL, "Project A");
 
         // when
-        ProjectType projectType = project.getProjectType();
-        ProjectType exceptedType = ProjectType.INTERNAL;
+        ProjectType actualprojectType = project.getProjectType();
+
         // then
-        assertThat(projectType == exceptedType);
+        assertEquals(actualprojectType, ProjectType.INTERNAL);
     }
 
     @Test
@@ -28,10 +31,10 @@ class ExpenseServiceTest {
         Project project = new Project(ProjectType.EXTERNAL, "Project A");
 
         // when
-        ExpenseType exceptedExpenseType = ExpenseService.getExpenseCodeByProjectTypeAndName(project);
+        ExpenseType actualExpenseType = ExpenseService.getExpenseCodeByProjectTypeAndName(project);
 
         // then
-        assertThat(ExpenseType.EXPENSE_TYPE_A == exceptedExpenseType);
+        assertEquals(actualExpenseType, ExpenseType.EXPENSE_TYPE_A);
     }
 
     @Test
@@ -40,10 +43,10 @@ class ExpenseServiceTest {
         Project project = new Project(ProjectType.EXTERNAL, "Project B");
 
         // when
-        ExpenseType exceptedExpenseType = ExpenseService.getExpenseCodeByProjectTypeAndName(project);
+        ExpenseType actualExpenseType = ExpenseService.getExpenseCodeByProjectTypeAndName(project);
 
         // then
-        assertThat(ExpenseType.EXPENSE_TYPE_B == exceptedExpenseType);
+        assertEquals(actualExpenseType, ExpenseType.EXPENSE_TYPE_B);
     }
 
     @Test
@@ -52,16 +55,21 @@ class ExpenseServiceTest {
         Project project = new Project(ProjectType.EXTERNAL, "Project C");
 
         // when
-        ExpenseType exceptedExpenseType = ExpenseService.getExpenseCodeByProjectTypeAndName(project);
+        ExpenseType actualExpenseType = ExpenseService.getExpenseCodeByProjectTypeAndName(project);
 
         // then
-        assertThat(ExpenseType.OTHER_EXPENSE == exceptedExpenseType);
+        assertEquals(actualExpenseType, ExpenseType.OTHER_EXPENSE);
     }
 
     @Test
     void should_throw_unexpected_project_exception_if_project_is_invalid() {
         // given
+        Project project = new Project(ProjectType.UNEXPECTED_PROJECT_TYPE, "Project C");
+
         // when
+        UnexpectedProjectTypeException unexpectedProjectTypeException = assertThrows(UnexpectedProjectTypeException.class, () -> ExpenseService.getExpenseCodeByProjectTypeAndName(project));
+
         // then
+        assertEquals("You enter invalid project type", unexpectedProjectTypeException.getMessage());
     }
 }
